@@ -1,0 +1,246 @@
+<iframe style="width:100%;height:980px;border:0;border-radius:12px;overflow:hidden" loading="lazy"></iframe>
+<script>
+(function(){
+  const srcdoc = `
+  <!doctype html>
+  <html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <style>
+      html,body{margin:0;padding:16px;background:#fff}
+    </style>
+  </head>
+  <body>
+    <div id="bb-widget-root"></div>
+    <script type="text/javascript">
+    (function(){
+      const STYLES = `
+        .bbw{--accent:#ff6a00;--bg:#fff;--text:#1a1a1a;--muted:#666;--line:#e9e9e9;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text);}
+        .bbw *{box-sizing:border-box;}
+        .bbw .card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px;}
+        .bbw h2{margin:0 0 10px;font-size:20px;}
+        .bbw h3{margin:0 0 8px;font-size:16px;}
+        .bbw .muted{color:var(--muted);font-size:13px;}
+        .bbw .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+        .bbw .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px dashed var(--line);}
+        .bbw .row:first-child{border-top:none;}
+        .bbw .name{font-weight:600;}
+        .bbw .unit{font-size:12px;color:var(--muted);}
+        .bbw .qty{display:flex;align-items:center;gap:6px;}
+        .bbw input[type=number]{width:90px;max-width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px;}
+        .bbw .stepper{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+        .bbw .stepper button{background:#f9f9f9;border:0;padding:6px 10px;cursor:pointer;font-weight:700;}
+        .bbw .stepper input{width:70px;max-width:100%;border:0;padding:6px 10px;text-align:center;}
+        .bbw .warn{color:#a83232;font-size:12px;margin-top:4px;}
+        .bbw .summary{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:14px;}
+        .bbw .summary .label{color:var(--muted);}
+        .bbw .total{font-size:18px;font-weight:800;}
+        .bbw .badge{display:inline-block;background:rgba(255,106,0,.08);color:var(--accent);padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;}
+        .bbw .cta{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;}
+        .bbw .stack{display:grid;gap:12px;}
+        .bbw .section{border:1px solid var(--line);border-radius:14px;padding:14px;}
+        .bbw .note{font-size:12px;color:var(--muted);}
+        .bbw .line{height:1px;background:var(--line);margin:10px 0;}
+
+        @media (max-width: 600px) {
+          html, body { padding: 4px !important; }
+          .bbw .stack { gap: 8px; }
+          .bbw .section, .bbw .card { padding: 8px; }
+          .bbw .grid { grid-template-columns: 1fr; gap: 8px; }
+          .bbw .card { min-width: 0; }
+        }
+      `;
+
+      const ITEMS = [
+        { id:'plain_dosa', name:'Plain Dosa Batter', unit:'$/lb', price:3, kind:'batter', min:2 },
+        { id:'ragi_dosa', name:'Ragi Dosa Batter', unit:'$/lb', price:5, kind:'batter', min:2 },
+        { id:'millet_dosa', name:'Millet Dosa Batter', unit:'$/lb', price:6, kind:'batter', min:2 },
+        { id:'pesarattu', name:'Pesarattu (Moong Dal)', unit:'$/lb', price:5, kind:'batter', min:2 },
+        { id:'idli', name:'Idli Batter', unit:'$/lb', price:5, kind:'batter', min:2 },
+        { id:'millet_idli', name:'Millet Idli Batter', unit:'$/lb', price:6, kind:'batter', min:2 },
+        { id:'vada', name:'Wada Batter', unit:'$/lb', price:6, kind:'batter', min:2 },
+        { id:'chut_peanut', name:'Groundnut (Peanut)', unit:'$/8oz', price:4, kind:'chutney', min:0 },
+        { id:'chut_tomato', name:'Tomato', unit:'$/8oz', price:4, kind:'chutney', min:0 },
+        { id:'chut_ginger', name:'Ginger', unit:'$/8oz', price:5, kind:'chutney', min:0 },
+      ];
+
+      function getDiscount(subtotal){
+        let rate = 0;
+        if (subtotal >= 150) rate = 0.25;
+        else if (subtotal >= 100) rate = 0.20;
+        else if (subtotal >= 75) rate = 0.15;
+        else if (subtotal >= 50) rate = 0.10;
+        else if (subtotal >= 20) rate = 0.05;
+        return { rate, label: rate>0 ? Math.round(rate*100)+'% discount applied' : 'No discount' };
+      }
+
+      const cur = n => '$' + (Math.round(n*100)/100).toFixed(2);
+      const mount = document.getElementById('bb-widget-root');
+      const wrap = document.createElement('div');
+      wrap.className = 'bbw';
+      const style = document.createElement('style');
+      style.textContent = STYLES;
+      document.head.appendChild(style);
+
+      wrap.innerHTML = \`
+      <div class="stack">
+        <div class="card">
+          <h2>Build Your Order</h2>
+          <div class="muted">Select quantities to estimate your total. Batters require a minimum of 2 lb per item. Pickup in Walled Lake, MI.</div>
+        </div>
+        <div class="section">
+          <h3>Batters <span class="badge">2 lb min per item</span></h3>
+          <div class="grid" id="grid-batters"></div>
+        </div>
+        <div class="section">
+          <h3>Fresh Chutneys</h3>
+          <div class="grid" id="grid-chutneys"></div>
+        </div>
+        <div class="section">
+          <h3>Order Summary</h3>
+          <div class="summary" id="sum-lines"></div>
+          <div class="line"></div>
+          <div class="summary">
+            <div class="label">Subtotal</div>
+            <div id="subtotal">$0.00</div>
+            <div class="label">Discount</div>
+            <div id="discount">$0.00</div>
+            <div class="label">Estimated Total</div>
+            <div class="total" id="total">$0.00</div>
+          </div>
+          <div class="muted" id="discLabel" style="margin-top:6px">No discount</div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="cta" id="copyQuote">Copy Quote</button>
+            <a class="cta" style="background:#333" href="#order-form">Go to Order Form</a>
+          </div>
+          <div class="note" style="margin-top:8px">Final totals may adjust at confirmation. Discounts are applied automatically based on order subtotal.</div>
+        </div>
+      </div>
+      \`;
+      mount.appendChild(wrap);
+
+      const gridB = wrap.querySelector('#grid-batters');
+      const gridC = wrap.querySelector('#grid-chutneys');
+
+      function makeCard(item){
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = \`
+          <div class="name">\${item.name}</div>
+          <div class="unit">\${item.unit} — \${cur(item.price)}</div>
+          <div class="row">
+            <div class="muted">\${item.kind==='batter' ? 'Enter pounds (lb)' : 'Enter 8oz tubs'}</div>
+            <div class="qty">
+              <div class="stepper">
+                <button type="button" aria-label="decrease">−</button>
+                <input type="number" min="0" step="\${item.kind==='batter' ? '0.5' : '1'}" value="0">
+                <button type="button" aria-label="increase">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="warn" style="display:none"></div>
+        \`;
+        const [minus, plus] = card.querySelectorAll('button');
+        const input = card.querySelector('input');
+        const warn = card.querySelector('.warn');
+
+        function clamp(val){
+          let n = parseFloat(val || '0');
+          if (isNaN(n) || n < 0) n = 0;
+          if (item.kind==='batter') n = Math.round(n*2)/2;
+          else n = Math.round(n);
+          return n;
+        }
+        function validateAndUpdate(){
+          let n = clamp(input.value);
+          input.value = n;
+          if (item.kind==='batter' && n>0 && n<item.min){
+            warn.style.display = '';
+            warn.textContent = \`Minimum \${item.min} lb for \${item.name}.\`;
+          } else {
+            warn.style.display = 'none';
+          }
+          updateTotals();
+        }
+        minus.addEventListener('click', ()=>{
+          const step = item.kind==='batter' ? 0.5 : 1;
+          input.value = clamp((parseFloat(input.value||'0') - step).toString());
+          validateAndUpdate();
+        });
+        plus.addEventListener('click', ()=>{
+          const step = item.kind==='batter' ? 0.5 : 1;
+          input.value = clamp((parseFloat(input.value||'0') + step).toString());
+          validateAndUpdate();
+        });
+        input.addEventListener('input', validateAndUpdate);
+        input.addEventListener('blur', validateAndUpdate);
+
+        card.dataset.id = item.id;
+        return card;
+      }
+
+      ITEMS.filter(i=>i.kind==='batter').forEach(it=>gridB.appendChild(makeCard(it)));
+      ITEMS.filter(i=>i.kind==='chutney').forEach(it=>gridC.appendChild(makeCard(it)));
+
+      function getQty(id){
+        const el = wrap.querySelector(\`[data-id="\${id}"] input\`);
+        return parseFloat(el?.value || '0') || 0;
+      }
+
+      function updateTotals(){
+        let linesHtml = '';
+        let subtotal = 0;
+        ITEMS.forEach(it=>{
+          const q = getQty(it.id);
+          if (!q) return;
+          let valid = true;
+          if (it.kind==='batter' && q>0 && q<it.min) valid = false;
+          const lineTotal = valid ? (q * it.price) : 0;
+          if (valid) subtotal += lineTotal;
+          const qtyLabel = it.kind==='batter' ? \`\${q} lb\` : \`\${q} × 8oz\`;
+          const invalidLabel = valid ? '' : ' (below minimum, not counted)';
+          linesHtml += \`
+            <div class="label">\${it.name} — \${qtyLabel}\${invalidLabel}</div>
+            <div>\${cur(lineTotal)}</div>\`;
+        });
+        const disc = getDiscount(subtotal);
+        const discountAmt = Math.round(subtotal * disc.rate * 100)/100;
+        const total = subtotal - discountAmt;
+        wrap.querySelector('#sum-lines').innerHTML = linesHtml || '<div class="label">No items selected</div><div>$0.00</div>';
+        wrap.querySelector('#subtotal').textContent = cur(subtotal);
+        wrap.querySelector('#discount').textContent = '-' + cur(discountAmt);
+        wrap.querySelector('#total').textContent = cur(total);
+        wrap.querySelector('#discLabel').textContent = disc.label;
+      }
+
+      wrap.querySelector('#copyQuote').addEventListener('click', ()=>{
+        const subtotal = wrap.querySelector('#subtotal').textContent;
+        const discount = wrap.querySelector('#discount').textContent;
+        const total = wrap.querySelector('#total').textContent;
+        const lines = Array.from(wrap.querySelectorAll('#sum-lines .label')).map(el=>{
+          const val = el.nextElementSibling?.textContent || '';
+          return \`\${el.textContent} — \${val}\`;
+        });
+        const text = [
+          'Batter & Bliss — Order Estimate',
+          ...lines,
+          'Subtotal: '+subtotal,
+          'Discount: '+discount,
+          'Estimated Total: '+total
+        ].join('\\n');
+        (navigator.clipboard && navigator.clipboard.writeText)
+          ? navigator.clipboard.writeText(text).then(()=>alert('Quote copied to clipboard.'),()=>alert('Copy failed. Please copy manually.'))
+          : alert('Select and copy: \\n\\n'+text);
+      });
+
+      updateTotals();
+    })();
+    <\/script>
+  </body>
+  </html>
+  `;
+  const frame = document.currentScript.previousElementSibling;
+  frame.srcdoc = srcdoc;
+})();
+</script>
