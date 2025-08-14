@@ -1,5 +1,5 @@
 <iframe style="width:100%;height:980px;border:0;border-radius:12px;overflow:hidden" loading="lazy"></iframe>
-<script>
+<script type="text/javascript">
 (function(){
   const srcdoc = `
   <!doctype html>
@@ -15,42 +15,38 @@
     <div id="bb-widget-root"></div>
     <script type="text/javascript">
     (function(){
-      const STYLES = `
-        .bbw{--accent:#ff6a00;--bg:#fff;--text:#1a1a1a;--muted:#666;--line:#e9e9e9;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text);}
-        .bbw *{box-sizing:border-box;}
-        .bbw .card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px;}
-        .bbw h2{margin:0 0 10px;font-size:20px;}
-        .bbw h3{margin:0 0 8px;font-size:16px;}
-        .bbw .muted{color:var(--muted);font-size:13px;}
-        .bbw .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
-        .bbw .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px dashed var(--line);}
-        .bbw .row:first-child{border-top:none;}
-        .bbw .name{font-weight:600;}
-        .bbw .unit{font-size:12px;color:var(--muted);}
-        .bbw .qty{display:flex;align-items:center;gap:6px;}
-        .bbw input[type=number]{width:90px;max-width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px;}
-        .bbw .stepper{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
-        .bbw .stepper button{background:#f9f9f9;border:0;padding:6px 10px;cursor:pointer;font-weight:700;}
-        .bbw .stepper input{width:70px;max-width:100%;border:0;padding:6px 10px;text-align:center;}
-        .bbw .warn{color:#a83232;font-size:12px;margin-top:4px;}
-        .bbw .summary{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:14px;}
-        .bbw .summary .label{color:var(--muted);}
-        .bbw .total{font-size:18px;font-weight:800;}
-        .bbw .badge{display:inline-block;background:rgba(255,106,0,.08);color:var(--accent);padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;}
-        .bbw .cta{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;}
-        .bbw .stack{display:grid;gap:12px;}
-        .bbw .section{border:1px solid var(--line);border-radius:14px;padding:14px;}
-        .bbw .note{font-size:12px;color:var(--muted);}
-        .bbw .line{height:1px;background:var(--line);margin:10px 0;}
-
-        @media (max-width: 600px) {
-          html, body { padding: 4px !important; }
-          .bbw .stack { gap: 8px; }
-          .bbw .section, .bbw .card { padding: 8px; }
-          .bbw .grid { grid-template-columns: 1fr; gap: 8px; }
-          .bbw .card { min-width: 0; }
-        }
-      `;
+      const STYLES = \`
+        .bbw{--accent:#ff6a00;--bg:#fff;--text:#1a1a1a;--muted:#666;--line:#e9e9e9;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text)}
+        .bbw *{box-sizing:border-box}
+        .bbw .card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px}
+        .bbw h2{margin:0 0 10px;font-size:20px}
+        .bbw h3{margin:0 0 8px;font-size:16px}
+        .bbw .muted{color:var(--muted);font-size:13px}
+        .bbw .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+        .bbw .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px dashed var(--line)}
+        .bbw .row:first-child{border-top:none}
+        .bbw .name{font-weight:600}
+        .bbw .unit{font-size:12px;color:var(--muted)}
+        .bbw .qty{display:flex;align-items:center;gap:6px}
+        .bbw input[type=number]{width:90px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px}
+        .bbw .stepper{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+        .bbw .stepper button{background:#f9f9f9;border:0;padding:6px 10px;cursor:pointer;font-weight:700}
+        .bbw .stepper input{width:70px;border:0;padding:6px 10px;text-align:center}
+        .bbw .warn{color:#a83232;font-size:12px;margin-top:4px}
+        .bbw .summary{display:grid;grid-template-columns:1fr min-content;gap:6px;font-size:14px;padding-left:16px}
+        .bbw .summary .label{color:var(--muted)}
+        .bbw .total{font-size:18px;font-weight:800}
+        .bbw .badge{display:inline-block;background:rgba(255,106,0,.08);color:var(--accent);padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}
+        .bbw .cta{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer}
+        .bbw .stack{display:grid;gap:12px}
+        .bbw .section{border:1px solid var(--line);border-radius:14px;padding:14px}
+        .bbw .note{font-size:12px;color:var(--muted)}
+        .bbw .line{height:1px;background:var(--line);margin:10px 0}
+        .bbw .form-row{display:flex;flex-wrap:wrap;gap:12px 24px;margin-bottom:10px}
+        .bbw .form-row label{font-size:14px;font-weight:600;min-width:120px}
+        .bbw .form-row input, .bbw .form-row textarea{font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;min-width:180px}
+        .bbw .form-row textarea{resize:vertical;min-height:32px;max-width:300px}
+      \`;
 
       const ITEMS = [
         { id:'plain_dosa', name:'Plain Dosa Batter', unit:'$/lb', price:3, kind:'batter', min:2 },
@@ -90,6 +86,27 @@
           <div class="muted">Select quantities to estimate your total. Batters require a minimum of 2 lb per item. Pickup in Walled Lake, MI.</div>
         </div>
         <div class="section">
+          <h3>Your Details</h3>
+          <form id="orderForm" autocomplete="on">
+            <div class="form-row">
+              <label for="custName">Name*</label>
+              <input type="text" id="custName" name="custName" required maxlength="50" />
+            </div>
+            <div class="form-row">
+              <label for="custPhone">Phone*</label>
+              <input type="tel" id="custPhone" name="custPhone" required maxlength="20" pattern="^[0-9\\-\\+\\s\\(\\)]{7,}$" />
+            </div>
+            <div class="form-row">
+              <label for="custPickup">Pickup Date & Time*</label>
+              <input type="text" id="custPickup" name="custPickup" required maxlength="40" placeholder="e.g. 08-26 10:00" />
+            </div>
+            <div class="form-row">
+              <label for="custNotes">Notes</label>
+              <textarea id="custNotes" name="custNotes" maxlength="200" placeholder="Any special instructions?"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="section">
           <h3>Batters <span class="badge">2 lb min per item</span></h3>
           <div class="grid" id="grid-batters"></div>
         </div>
@@ -111,8 +128,7 @@
           </div>
           <div class="muted" id="discLabel" style="margin-top:6px">No discount</div>
           <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="cta" id="copyQuote">Copy Quote</button>
-            <a class="cta" style="background:#333" href="#order-form">Go to Order Form</a>
+            <button class="cta" id="copyQuote" type="button">Send to Google Order Form</button>
           </div>
           <div class="note" style="margin-top:8px">Final totals may adjust at confirmation. Discounts are applied automatically based on order subtotal.</div>
         </div>
@@ -134,7 +150,7 @@
             <div class="qty">
               <div class="stepper">
                 <button type="button" aria-label="decrease">−</button>
-                <input type="number" min="0" step="\${item.kind==='batter' ? '0.5' : '1'}" value="0">
+                <input type="number" min="0" step="\${item.kind==='batter' ? '1' : '1'}" value="0">
                 <button type="button" aria-label="increase">+</button>
               </div>
             </div>
@@ -148,7 +164,7 @@
         function clamp(val){
           let n = parseFloat(val || '0');
           if (isNaN(n) || n < 0) n = 0;
-          if (item.kind==='batter') n = Math.round(n*2)/2;
+          if (item.kind==='batter') n = Math.round(n);
           else n = Math.round(n);
           return n;
         }
@@ -164,12 +180,12 @@
           updateTotals();
         }
         minus.addEventListener('click', ()=>{
-          const step = item.kind==='batter' ? 0.5 : 1;
+          const step = item.kind==='batter' ? 1 : 1;
           input.value = clamp((parseFloat(input.value||'0') - step).toString());
           validateAndUpdate();
         });
         plus.addEventListener('click', ()=>{
-          const step = item.kind==='batter' ? 0.5 : 1;
+          const step = item.kind==='batter' ? 1 : 1;
           input.value = clamp((parseFloat(input.value||'0') + step).toString());
           validateAndUpdate();
         });
@@ -214,7 +230,18 @@
         wrap.querySelector('#discLabel').textContent = disc.label;
       }
 
+      // Updated Copy Quote button handler to send data to Google Form
       wrap.querySelector('#copyQuote').addEventListener('click', ()=>{
+        const form = wrap.querySelector('#orderForm');
+        if (!form.reportValidity()) {
+          form.scrollIntoView({behavior:'smooth', block:'center'});
+          return;
+        }
+        const name = form.custName.value.trim();
+        const phone = form.custPhone.value.trim();
+        const pickup = form.custPickup.value.trim();
+        const notes = form.custNotes.value.trim();
+
         const subtotal = wrap.querySelector('#subtotal').textContent;
         const discount = wrap.querySelector('#discount').textContent;
         const total = wrap.querySelector('#total').textContent;
@@ -222,16 +249,26 @@
           const val = el.nextElementSibling?.textContent || '';
           return \`\${el.textContent} — \${val}\`;
         });
-        const text = [
+        const orderSummary = [
           'Batter & Bliss — Order Estimate',
           ...lines,
           'Subtotal: '+subtotal,
           'Discount: '+discount,
           'Estimated Total: '+total
         ].join('\\n');
-        (navigator.clipboard && navigator.clipboard.writeText)
-          ? navigator.clipboard.writeText(text).then(()=>alert('Quote copied to clipboard.'),()=>alert('Copy failed. Please copy manually.'))
-          : alert('Select and copy: \\n\\n'+text);
+
+        // Build the Google Form URL with pre-filled entries
+        const formBase = 'https://docs.google.com/forms/d/e/1FAIpQLSeApsknusZO-EMzCyhJ57K7vT_QIb_ngyRVlj0qD8242Yhtlg/viewform?usp=pp_url';
+        const params = [
+          'entry.1081597401=' + encodeURIComponent(name),
+          'entry.554771708=' + encodeURIComponent(phone),
+          'entry.1277114301=' + encodeURIComponent(pickup),
+          'entry.11072929=' + encodeURIComponent(notes),
+          'entry.2009502732=' + encodeURIComponent(orderSummary)
+        ].join('&');
+        const url = formBase + '&' + params;
+
+        window.open(url, '_blank');
       });
 
       updateTotals();
