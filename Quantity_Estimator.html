@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dosa, Idli & ChutneyQuantity Estimator</title>
+<style>
+  :root{
+    --bg:#fafafa;--card:#ffffff;--text:#222;--muted:#666;--brand:#e4572e;
+    --ring:#ffddb0;--shadow:0 8px 24px rgba(0,0,0,.08)
+  }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+  .wrap{max-width:920px;margin:24px auto;padding:12px}
+  .card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:20px}
+  h1{font-size:1.6rem;margin:.2rem 0 1rem}
+  h2{font-size:1.1rem;margin:1.2rem 0 .5rem}
+  p.small{color:var(--muted);font-size:.9rem;margin:.25rem 0 .75rem}
+  .grid{display:grid;gap:12px}
+  @media(min-width:720px){.grid.cols-2{grid-template-columns:1fr 1fr}}
+  label{display:block;font-weight:600;margin:.1rem 0 .25rem}
+  input[type="number"]{
+    width:100%;box-sizing:border-box;padding:.65rem .7rem;border:1.5px solid #ddd;border-radius:12px;font-size:1rem;outline:none
+  }
+  input[type="number"]:focus{border-color:var(--brand);box-shadow:0 0 0 4px var(--ring)}
+  .row{display:flex;gap:12px;align-items:end}
+  .btn{
+    appearance:none;background:var(--brand);color:#fff;border:none;border-radius:12px;
+    padding:.75rem 1rem;font-weight:700;cursor:pointer
+  }
+  .muted{color:var(--muted)}
+  .pill{display:inline-block;background:#f3f3f3;border-radius:999px;padding:.25rem .6rem;font-size:.85rem;margin-right:.4rem}
+  .results{display:grid;gap:12px;margin-top:12px}
+  .result-card{background:#fff;border:1px solid #eee;border-radius:14px;padding:14px}
+  .big{font-size:1.4rem;font-weight:800}
+  details{background:#fff;border:1px dashed #e6e6e6;border-radius:12px;padding:12px}
+  details summary{cursor:pointer;font-weight:700;margin:-12px;padding:12px}
+  .foot{font-size:.85rem;color:var(--muted);margin-top:12px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>🧮 Dosa, Idli & Chutney Quantity Estimator</h1>
+      <p class="small">Enter how many <strong>dosas</strong> and <strong>idlis</strong> you plan to serve. We’ll estimate batter (in lbs) and chutney (in oz & cups).</p>
+
+      <div class="grid cols-2">
+        <div>
+          <label for="dosas">Number of Dosas</label>
+          <input id="dosas" type="number" min="0" step="1" placeholder="e.g., 0" value="0" />
+        </div>
+        <div>
+          <label for="idlis">Number of Idlis</label>
+          <input id="idlis" type="number" min="0" step="1" placeholder="e.g., 0" value="0" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="calcBtn">Calculate</button>
+        <span class="muted">Uses: <span class="pill">2 lb → 18 dosas</span><span class="pill">16 oz chutney → 18 dosas</span></span>
+      </div>
+
+      <h2>Results</h2>
+      <div class="results" id="results">
+        <!-- Filled by JS -->
+      </div>
+
+      <details style="margin-top:14px">
+        <summary>Advanced (tweak yields)</summary>
+        <p class="small">Adjust these if your shop’s yields differ. Results update when you click <b>Calculate</b>.</p>
+        <div class="grid cols-2">
+          <div>
+            <label for="dosaPerTwoLb">Dosas per <b>2 lb</b> batter</label>
+            <input id="dosaPerTwoLb" type="number" min="1" step="1" value="18" />
+          </div>
+          <div>
+            <label for="chutneyOzPer18Dosas">Chutney oz per <b>18</b> dosas</label>
+            <input id="chutneyOzPer18Dosas" type="number" min="1" step="0.1" value="16" />
+          </div>
+          <div>
+            <label for="idlisPerLb">Idlis per <b>1 lb</b> batter</label>
+            <input id="idlisPerLb" type="number" min="1" step="1" value="13" />
+          </div>
+          <div>
+            <label for="chutneyOzPerIdli">Chutney oz per <b>1</b> idli</label>
+            <input id="chutneyOzPerIdli" type="number" min="0" step="0.05" value="0.6" />
+          </div>
+        </div>
+      </details>
+
+      <div class="foot">Tip: We round up recommended amounts so nobody goes hungry. 🫶</div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+
+  function ceilToStep(x, step){
+    if (step <= 0) return x;
+    return Math.ceil(x / step) * step;
+  }
+
+  function fmt(x, digits=2){
+    return Number(x.toFixed(digits)).toLocaleString();
+  }
+
+  function calc(){
+    // Inputs
+    const dosas = Math.max(0, parseInt($("dosas").value || 0, 10));
+    const idlis = Math.max(0, parseInt($("idlis").value || 0, 10));
+
+    // Advanced yields
+    const dosaPerTwoLb = Math.max(1, Number($("dosaPerTwoLb").value || 18));
+    const idlisPerLb   = Math.max(1, Number($("idlisPerLb").value || 13));
+    const chutOzPer18  = Math.max(0, Number($("chutneyOzPer18Dosas").value || 16));
+    const chutOzPerIdli= Math.max(0, Number($("chutneyOzPerIdli").value || 0.6));
+
+    // Core ratios (derived)
+    const lbPerDosa = 2 / dosaPerTwoLb;                 // from your spec: 2 lb → dosaPerTwoLb dosas
+    const chutOzPerDosa = chutOzPer18 / 18;             // from your spec: 16 oz → 18 dosas
+    const lbPerIdli = 1 / idlisPerLb;
+
+    // Raw calculations
+    const dosaBatterLb = dosas * lbPerDosa;             // exact
+    const idliBatterLb = idlis * lbPerIdli;             // exact
+    const totalBatterLb = dosaBatterLb + idliBatterLb;
+
+    const dosaChutOz = dosas * chutOzPerDosa;
+    const idliChutOz = idlis * chutOzPerIdli;
+    const totalChutOz = dosaChutOz + idliChutOz;
+    const totalChutCups = totalChutOz / 8;
+
+    // Recommended rounding (to make life easy)
+    const dosaBatterLbRounded = ceilToStep(dosaBatterLb, 0.5); // round up to nearest 0.5 lb
+    const idliBatterLbRounded = ceilToStep(idliBatterLb, 0.5);
+    const totalBatterLbRounded= ceilToStep(totalBatterLb, 0.5);
+
+    const totalChutOzRounded  = ceilToStep(totalChutOz, 2);    // round up to nearest 2 oz
+    const totalChutCupsRounded= totalChutOzRounded / 8;
+
+    // Build UI
+    $("results").innerHTML = `
+      <div class="result-card">
+        <div class="big">Dosa Batter: ${fmt(dosaBatterLb)} lb <span class="muted">(exact)</span></div>
+        <div>Recommended to prepare: <strong>${fmt(dosaBatterLbRounded,1)} lb</strong></div>
+        <div class="muted">Based on ${fmt(lbPerDosa,3)} lb per dosa (2 lb → ${fmt(dosaPerTwoLb,0)} dosas)</div>
+      </div>
+
+      <div class="result-card">
+        <div class="big">Idli Batter: ${fmt(idliBatterLb)} lb <span class="muted">(exact)</span></div>
+        <div>Recommended to prepare: <strong>${fmt(idliBatterLbRounded,1)} lb</strong></div>
+        <div class="muted">Based on ${fmt(idlisPerLb,0)} idlis per lb</div>
+      </div>
+
+      <div class="result-card">
+        <div class="big">Chutney: ${fmt(totalChutOz)} oz (${fmt(totalChutCups)} cups) <span class="muted">(exact)</span></div>
+        <div>Recommended to prepare: <strong>${fmt(totalChutOzRounded)} oz</strong> (${fmt(totalChutCupsRounded)} cups)</div>
+        <div class="muted">Assumes ${fmt(chutOzPerDosa,3)} oz per dosa & ${fmt(chutOzPerIdli,3)} oz per idli</div>
+      </div>
+    `;
+  }
+
+  $("calcBtn").addEventListener("click", calc);
+  // Auto-calc on load
+  calc();
+})();
+</script>
+</body>
+</html>
